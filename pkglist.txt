@@ -1,0 +1,12 @@
+git
+htop
+jq
+make
+mc
+thefuck
+wget
+whois
+tmux
+curl
+zsh
+stow
