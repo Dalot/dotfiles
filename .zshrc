@@ -112,8 +112,8 @@ export PATH="$PATH:/usr/local/go/bin/"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
 export PATH="$PATH:/opt/nvim-linux64/bin"
-##PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
+PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-##export PATH="/Users/dalot/.rd/bin:$PATH"
+export PATH="/Users/dalot/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
