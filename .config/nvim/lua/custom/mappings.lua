@@ -33,6 +33,11 @@ M.general = {
       end,
       "Goto next",
     },
+    ["<leader>tt"] = {
+      function()
+        require("base46").toggle_transparency()
+      end,
+      "Toggle transparency" },
   },
   v = {
     [">"] = { ">gv", "indent" },

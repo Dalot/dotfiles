@@ -109,11 +109,13 @@ source $ZSH/oh-my-zsh.sh
 #
 
 export PATH="$PATH:/usr/local/go/bin/"
-export PATH="$PATH:$(go env GOPATH)/bin"
+#export PATH="$PATH:$(go env GOPATH)/bin"
 
-export PATH="$PATH:/opt/nvim-linux64/bin"
-PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/dalot/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+if [[ `uname` == "Linux" ]]; then
+	export PATH="$PATH:/opt/nvim-linux64/bin"
+elif command kubectl > /dev/null; then
+	PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
+elif command rdctl > /dev/null; then
+  export PATH="/Users/dalot/.rd/bin:$PATH"
+elif [[ `uname` == "Darwin" ]]; then
+fi
