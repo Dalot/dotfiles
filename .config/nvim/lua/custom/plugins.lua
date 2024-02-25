@@ -54,17 +54,19 @@ local plugins = {
       require("fzf-lua").setup {}
     end,
   },
-  { 
+  {
     -- I only use this for the fatih/go-vim
-    "junegunn/fzf", 
-    build = "./install --bin" 
+    "junegunn/fzf",
+    build = "./install --bin"
   },
   {
     "fatih/vim-go",
     ft = { "go" },
-    -- config = function()
-    --   require "junegunn.fzf"
-    -- end, -- Override to setup mason-lspconfig
+  },
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
   },
   -- To make a plugin not be loaded
   -- {

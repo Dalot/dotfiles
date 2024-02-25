@@ -1,3 +1,4 @@
+.config/go
 .config/nvim/lua/
 .config/nvim/.*
 .config/nvim/init.lua
