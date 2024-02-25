@@ -40,8 +40,11 @@ https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubunt
 https://go.dev/doc/install
 
 ### Install alacritty
-`sudo add-apt-repository ppa:mmstick76/alacritty`
+
+`sudo add-apt-repository ppa:aslatter/ppa -y`
+
 `sudo apt update`
+
 `sudo apt install alacritty`
 
 ### Copy the config file

@@ -10,3 +10,4 @@ tmux
 curl
 zsh
 stow
+ripgrep
