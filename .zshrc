@@ -116,6 +116,8 @@ if [[ `uname` == "Linux" ]]; then
 elif command kubectl > /dev/null; then
 	PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
 elif command rdctl > /dev/null; then
-  export PATH="/Users/dalot/.rd/bin:$PATH"
+  export PATH="$PATH:/Users/dalot/.rd/bin"
+elif command cargo > /dev/null; then
+  export PATH="$PATH:$HOME/.cargo/bin"
 elif [[ `uname` == "Darwin" ]]; then
 fi

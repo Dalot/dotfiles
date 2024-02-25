@@ -8,3 +8,4 @@
 
 vim.g.mapleader = ","
 vim.opt.relativenumber = true
+vim.g.termguicolors = true

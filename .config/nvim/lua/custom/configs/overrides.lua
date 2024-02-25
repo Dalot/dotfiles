@@ -67,4 +67,8 @@ M.nvimtree = {
   },
 }
 
+M.telescope = {
+  ["<leader>ff"] = {":Telescope find_files find_command={'rg','--ignore','--hidden','--files','-g','!vendor','-g','!.git'}<CR>", "  find files" },
+}
+
 return M
