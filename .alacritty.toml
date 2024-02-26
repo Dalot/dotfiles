@@ -9,4 +9,4 @@ args = ["-l", "-c", "tmux attach || tmux"]
 [window]
 # For Mac
 option_as_alt = "OnlyLeft"
-opacity = 0.9
+opacity = 0.85

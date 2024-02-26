@@ -8,4 +8,7 @@
 
 vim.g.mapleader = ","
 vim.opt.relativenumber = true
-vim.g.termguicolors = true
+vim.opt.termguicolors = true
+vim.opt.swapfile = false
+vim.opt.autoindent = true
+vim.opt.smartindent = true

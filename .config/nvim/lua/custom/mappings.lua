@@ -102,4 +102,16 @@ M.harpoon = {
   },
 }
 
+M.lspconfig = {
+
+  n = {
+    ["<leader>ds"] = {
+      function()
+        vim.lsp.buf.document_symbol()
+      end,
+      "LSP document symbol",
+    },
+  }
+}
+
 return M

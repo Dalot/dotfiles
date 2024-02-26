@@ -109,15 +109,21 @@ source $ZSH/oh-my-zsh.sh
 #
 
 export PATH="$PATH:/usr/local/go/bin/"
-#export PATH="$PATH:$(go env GOPATH)/bin"
 
 if [[ `uname` == "Linux" ]]; then
 	export PATH="$PATH:/opt/nvim-linux64/bin"
-elif command kubectl > /dev/null; then
-	PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
-elif command rdctl > /dev/null; then
-  export PATH="$PATH:/Users/dalot/.rd/bin"
-elif command cargo > /dev/null; then
-  export PATH="$PATH:$HOME/.cargo/bin"
 elif [[ `uname` == "Darwin" ]]; then
+  export PATH="$PATH:$(go env GOPATH)/bin"
+fi
+
+if command kubectl > /dev/null; then
+	PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
+fi
+
+if [ -d ~/.rd ]; then
+  export PATH="$PATH:$HOME/.rd/bin"
+fi
+
+if [ -d ~/.cargo ]; then
+  export PATH="$PATH:$HOME/.cargo/bin"
 fi
