@@ -76,7 +76,7 @@ z
 zsh-syntax-highlighting
 zsh-autosuggestions
 zsh-history-substring-search
-#kube-ps1
+kube-ps1
 )
 
 source $ZSH/oh-my-zsh.sh
