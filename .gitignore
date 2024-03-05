@@ -4,3 +4,4 @@
 .config/nvim/init.lua
 .config/nvim/LICENSE
 !.config/nvim/lua/custom
+.config/TabNine

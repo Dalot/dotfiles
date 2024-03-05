@@ -76,7 +76,6 @@ z
 zsh-syntax-highlighting
 zsh-autosuggestions
 zsh-history-substring-search
-kube-ps1
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -116,8 +115,9 @@ elif [[ `uname` == "Darwin" ]]; then
   export PATH="$PATH:$(go env GOPATH)/bin"
 fi
 
-if command kubectl > /dev/null; then
+if command kubectl > /dev/null 2>&1; then
 	PROMPT='$(kube_ps1)'$PROMPT # or RPROMPT='$(kube_ps1)'
+  plugins+=(kube_ps1)
 fi
 
 if [ -d ~/.rd ]; then

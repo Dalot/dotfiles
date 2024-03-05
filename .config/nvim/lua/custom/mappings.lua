@@ -104,7 +104,6 @@ M.harpoon = {
 }
 
 M.lspconfig = {
-
 	n = {
 		["<leader>ds"] = {
 			function()
