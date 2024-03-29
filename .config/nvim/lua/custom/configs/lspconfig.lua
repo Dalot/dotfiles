@@ -2,15 +2,15 @@ local on_attach = require("plugins.configs.lspconfig").on_attach
 local capabilities = require("plugins.configs.lspconfig").capabilities
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
--- local telescope_conf = require("telescope.config").values
+local telescope_conf = require("telescope.config").values
 -- local action_state = require "telescope.actions.state"
--- local actions = require "telescope.actions"
+local actions = require "telescope.actions"
 local previewers = require "telescope.previewers"
 
 local lspconfig = require "lspconfig"
 
 -- if you just want default config for the servers then put them in a table
-local servers = { "html", "cssls", "tsserver", "clangd", "gopls", "terraform_lsp" }
+local servers = { "html", "cssls", "tsserver", "clangd", "gopls", "terraform_lsp", "volar"}
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -18,6 +18,25 @@ for _, lsp in ipairs(servers) do
     capabilities = capabilities,
   }
 end
+
+require'lspconfig'.tsserver.setup{
+  init_options = {
+    plugins = {
+      {
+        name = "@vue/typescript-plugin",
+        location = "/usr/local/lib/node_modules/@vue/typescript-plugin",
+        languages = {"javascript", "typescript", "vue"},
+      },
+
+    },
+  },
+  filetypes = {
+    "javascript",
+    "typescript",
+    "vue",
+  },
+
+}
 
 local function get_go_files_in_package(dir_path)
   local go_files = {}
@@ -40,45 +59,47 @@ end
 
 -- Function to display symbols in Telescope
 local function show_symbols_with_telescope(symbols)
-  for _, symbol in ipairs(symbols) do
-    return
-    pickers
-      .new({}, {
-        prompt_title = "Methods",
-        finder = finders.new_table {
-          results = symbol,
-          entry_maker = function(entry)
-            return {
-              value = entry,
-              display = entry.name,
-              ordinal = entry.name,
-              lnum = entry.selectionRange.start.line + 1, -- Lua is 1-indexed
-              path = entry.path,
-            }
-          end,
-        },
-        previewer = previewers.new_buffer_previewer {
-          define_preview = function(self, _entry, _status)
-            vim.api.nvim_win_set_option(self.state.winid, "wrap", true) -- return {"bat", "--style=numbers", "--color=always", filepath, "--highlight-line", tostring(entry.lnum)}
-          end,
-        },
-        -- sorter = telescope_conf.generic_sorter({}),
-        -- attach_mappings = function(prompt_bufnr, _map)
-        --     actions.select_default:replace(function()
-        --         local selection = action_state.get_selected_entry()
-        --         actions.close(prompt_bufnr)
-        --         -- Navigate to the symbol's location
-        --         -- Assuming `value` contains the file path or similar to derive buffer number or file path
-        --         local path = vim.uri_to_fname(selection.value.uri) -- Convert LSP URI to file path
-        --         vim.cmd('e ' .. path) -- Open the file
-        --         local win = vim.api.nvim_get_current_win()
-        --         vim.api.nvim_win_set_cursor(win, { selection.lnum, selection.col }) -- Move cursor to symbol location
-        --     end)
-        --     return true
-        -- end,
-      })
-      :find()
-  end
+  -- Get the first of symbols
+  return pickers
+    .new({}, {
+      prompt_title = "Methods",
+      finder = finders.new_table {
+        results = symbols,
+        entry_maker = function(entry)
+          return {
+            value = entry,
+            display = entry.name,
+            ordinal = entry.name,
+            lnum = entry.selectionRange.start.line + 1, -- Lua is 1-indexed
+            filename = entry.filename,
+          }
+        end,
+      },
+      -- set options in vim_buffer_cat
+      previewer = previewers.vim_buffer_cat.new(telescope_conf),
+      sorter = telescope_conf.generic_sorter({}),
+      -- previewer = previewers.new_buffer_previewer {
+      --   define_preview = function(self, entry, _status)
+      --     local filepath = entry.value.path -- Ensure this path is correctly set in your symbols
+      --     if filepath then
+      --       -- Example command to preview the file, adjust according to your needs
+      --       local bat_cmd =
+      --         { "bat", "--style=numbers", "--color=always", filepath, "--highlight-line", tostring(entry.lnum) }
+      --       pcall(vim.fn.jobstart, bat_cmd, {
+      --         on_stdout = function(_, data)
+      --           if data then
+      --             self.state.bufnr = vim.api.nvim_create_buf(false, true) -- Create a new buffer for the preview1
+      --             vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, data)
+      --             vim.api.nvim_win_set_buf(self.state.winid, self.state.bufnr)
+      --           end
+      --         end,
+      --       })
+      --     end
+      --   end,
+      -- },
+      -- sorter = require("telescope.config").values.generic_sorter {},
+    })
+    :find()
 end
 
 local function get_symbols_for_file(file_path)
@@ -99,25 +120,8 @@ local function get_symbols_for_file(file_path)
     1000 -- 1 second
   )
 
-  -- local symbols = {}
-  -- if response then
-  --   for _client_id, server_response in pairs(response) do
-  --     if server_response.result then
-  --       for _, symbol in ipairs(server_response.result) do
-  --         symbol.path = file_path
-  --         table.insert(symbols, symbol)
-  --       end
-  --     end
-  --   end
-  -- else
-  --   print(vim.inspect "no result on buf_request_sync")
-  --   return
-  -- end
-  --
-  -- -- vim.lsp.buf.document_symbol({ symbols = "methods" })
-  -- return symbols 
   if not response or vim.tbl_isempty(response) then
-    print("LSP response is empty or nil.")
+    print "LSP response is empty or nil."
     return
   end
 
@@ -125,7 +129,7 @@ local function get_symbols_for_file(file_path)
   -- Adjust accordingly if there are multiple clients.
   local client_id, result = next(response)
   if not result or not result.result then
-    print("No result from LSP server.")
+    print "No result from LSP server."
     return
   end
 
@@ -136,14 +140,19 @@ local function get_symbols_for_file(file_path)
   -- You might need to adjust the condition depending on the symbol kind you want.
   for _, symbol in ipairs(symbols) do
     if symbol.kind == 6 then -- SymbolKind.Method == 6
-      table.insert(filtered_symbols, symbol)
+      symbol.filename = file_path
+      -- before inserting symbol into the table, check if it exists
+      local exists = false
+      for _, existing_symbol in ipairs(filtered_symbols) do
+        if existing_symbol.name == symbol.name then
+          exists = true
+          break
+        end
+      end
+      if not exists then
+        table.insert(filtered_symbols, symbol)
+      end
     end
-  end
-
-  -- Do something with `filtered_symbols`, like formatting them for display.
-  -- This is a basic example; you might want to structure them more nicely.
-  for _, symbol in ipairs(filtered_symbols) do
-    print(symbol.name) -- Simple print; you can format it as needed.
   end
 
   return filtered_symbols
@@ -158,11 +167,12 @@ local function gather_symbols_from_package()
   for _, file_name in ipairs(go_files) do
     local file_path = string.format("%s%s", dir_path, file_name)
     local symbols = get_symbols_for_file(file_path)
-    if not symbols then 
+    if not symbols then
       return
     end
+    -- unpack symbols and merge them into all_symbols
     for _, symbol in ipairs(symbols) do
-      table.insert(all_symbols, symbols)
+      table.insert(all_symbols, symbol)
     end
   end
 
